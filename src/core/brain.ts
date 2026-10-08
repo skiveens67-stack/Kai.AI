@@ -46,7 +46,7 @@ export class KaiBrain {
 
     const reply = plan.kind === "chat"
       ? `${agent.name} understood: "${plan.goal}". The Brain Core can plan this request, but its language-model adapter is not connected yet.`
-      : `${agent.name} understood this as a ${plan.kind} task. Background job ${job?.id ?? "not required"} is ${job ? "queued" : "not created"}; no creation or completion is being claimed.`;
+      : `${agent.name} understood this as a ${plan.kind} task. Job ${job?.id ?? "not required"} is ${job ? "queued" : "not created"}; no creation or completion is being claimed.`;
     if (this.memory.append) await this.memory.append(request.userId, "conversation", JSON.stringify({ role:"assistant", message:reply, character:plan.character }));
     return { plan, reply, jobId: job?.id };
   }
