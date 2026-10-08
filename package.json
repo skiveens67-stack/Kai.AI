@@ -4,12 +4,13 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test",
+    "test": "tsx --test tests/*.test.ts",
     "typecheck": "tsc --noEmit",
     "deploy": "wrangler deploy"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
+    "tsx": "^4.20.0",
     "typescript": "^5.7.0",
     "wrangler": "^4.40.0"
   }
