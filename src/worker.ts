@@ -1,10 +1,13 @@
 import { KaiBrain } from "./core/brain.js";
 import { CloudflareWorkersAIAdapter, type WorkersAIChatBinding } from "./core/cloudflare-workers-ai.js";
+import { SupabaseMemoryStore } from "./core/supabase-memory.js";
 
 interface Env {
   AI: WorkersAIChatBinding;
   KAI_API_SECRET: string;
   KAI_AI_MODEL?: string;
+  SUPABASE_URL: string;
+  SUPABASE_SERVICE_ROLE_KEY: string;
 }
 
 function json(body: unknown, status = 200): Response {
@@ -17,7 +20,9 @@ function json(body: unknown, status = 200): Response {
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     if (request.method !== "POST") return json({ error: "Use POST." }, 405);
-    if (!env.KAI_API_SECRET) return json({ error: "Server authentication is not configured." }, 503);
+    if (!env.KAI_API_SECRET || !env.SUPABASE_URL || !env.SUPABASE_SERVICE_ROLE_KEY) {
+      return json({ error: "Server secrets are not configured." }, 503);
+    }
     const authorization = request.headers.get("authorization") ?? "";
     if (authorization !== `Bearer ${env.KAI_API_SECRET}`) return json({ error: "Unauthorized." }, 401);
 
@@ -33,11 +38,12 @@ export default {
 
     try {
       const model = new CloudflareWorkersAIAdapter(env.AI, env.KAI_AI_MODEL || "@cf/meta/llama-3.1-8b-instruct");
-      const brain = new KaiBrain(model);
+      const memory = new SupabaseMemoryStore({ url: env.SUPABASE_URL, serviceRoleKey: env.SUPABASE_SERVICE_ROLE_KEY });
+      const brain = new KaiBrain(model, memory);
       const result = await brain.think({ userId: body.userId.trim(), message: body.message.trim() });
       return json({ ok: true, ...result });
     } catch {
-      return json({ error: "Kai could not complete the request. Check the model binding and server logs." }, 502);
+      return json({ error: "Kai could not complete the request. Check model and memory configuration." }, 502);
     }
   }
 };
