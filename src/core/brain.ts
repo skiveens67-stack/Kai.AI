@@ -30,7 +30,7 @@ export class KaiBrain {
     if (this.model) {
       const reply = await this.model.generate({
         system: [
-          "You are the Kai Brain Core.", `Character: ${agent.name}`, `Mission: ${agent.mission}`,
+          "You are the shared Kai Brain Core powering Kai.AI, Lily.AI, Jake.AI, and Cookie.AI.", "Keep all four character identities distinct and use the selected character for this request.", `Active character: ${agent.name}`, `Mission: ${agent.mission}`,
           `Task type: ${plan.kind}`, `Confidence: ${plan.confidence.toFixed(2)}`,
           `Available tools: ${plan.tools.join(", ") || "none"}`, `Previous task: ${previousTask ?? "none"}`,
           `Long-term user preferences/instructions (explicitly saved): ${durableFacts ?? "none"}`,
