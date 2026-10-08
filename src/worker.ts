@@ -41,12 +41,12 @@ export default {
     if (!env.SUPABASE_URL || !env.SUPABASE_ANON_KEY || !env.SUPABASE_SERVICE_ROLE_KEY) {
       return json({ error: "Server memory/auth configuration is missing." }, 503, origin);
     }
-    const token = (request.headers.get("authorization") ?? "").replace(/^Bearer\\s+/i, "").trim();
+    const token = (request.headers.get("authorization") ?? "").replace(/^Bearer\s+/i, "").trim();
     if (!token) return json({ error: "Sign in to use Kai." }, 401, origin);
 
     let userId: string;
     try {
-      const authResponse = await fetch(`${env.SUPABASE_URL.replace(/\\/+$/, "")}/auth/v1/user`, {
+      const authResponse = await fetch(`${env.SUPABASE_URL.replace(/\/+$/, "")}/auth/v1/user`, {
         headers: { apikey: env.SUPABASE_ANON_KEY, authorization: `Bearer ${token}` },
       });
       if (!authResponse.ok) return json({ error: "Your session is invalid or expired. Please sign in again." }, 401, origin);
