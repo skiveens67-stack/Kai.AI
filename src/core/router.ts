@@ -13,14 +13,25 @@ const rules: Array<{ kind: TaskKind; words: string[]; character: CharacterId }> 
   { kind:"code", words:["code","coding","program","script","typescript","javascript","python"], character:"kai" }
 ];
 
+function explicitlyRequestedCharacter(text: string): CharacterId | undefined {
+  const match = text.match(/\b(kai|lily|jake|cookie)(?:\.ai)?\b/i);
+  if (!match) return undefined;
+  return match[1].toLowerCase() as CharacterId;
+}
+
 export function classify(message: string): { kind: TaskKind; character: CharacterId; confidence: number } {
   const text = message.toLowerCase();
+  const requestedCharacter = explicitlyRequestedCharacter(text);
   let best = { kind: "chat" as TaskKind, character: "kai" as CharacterId, score: 0 };
   for (const rule of rules) {
     const score = rule.words.reduce((n, word) => n + (text.includes(word) ? 1 : 0), 0);
     if (score > best.score) best = { kind: rule.kind, character: rule.character, score };
   }
-  return { kind: best.kind, character: best.character, confidence: best.score === 0 ? 0.55 : Math.min(0.55 + best.score * 0.12, 0.97) };
+  return {
+    kind: best.kind,
+    character: requestedCharacter ?? best.character,
+    confidence: best.score === 0 ? (requestedCharacter ? 0.85 : 0.55) : Math.min(0.55 + best.score * 0.12, 0.97)
+  };
 }
 
 export function planRequest(request: BrainRequest): BrainPlan {
