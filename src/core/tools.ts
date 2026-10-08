@@ -9,7 +9,7 @@ export class ToolRegistry {
 
   register(tool: BrainTool): void {
     if (this.tools.has(tool.name)) {
-      throw new Error(\`Tool already registered: \${tool.name}\`);
+      throw new Error(`Tool already registered: ${tool.name}`);
     }
     this.tools.set(tool.name, tool);
   }
