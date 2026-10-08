@@ -1,8 +1,16 @@
 {
-  "name":"kai-brain-core",
-  "version":"0.1.0",
-  "private":true,
-  "type":"module",
-  "scripts":{"test":"node --test","typecheck":"tsc --noEmit"},
-  "devDependencies":{"typescript":"^5.7.0","@types/node":"^22.0.0"}
+  "name": "kai-brain-core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "typecheck": "tsc --noEmit",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.7.0",
+    "wrangler": "^4.40.0"
+  }
 }
