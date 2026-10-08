@@ -7,51 +7,40 @@ import type { BrainRequest, BrainResponse, MemoryStore, ModelAdapter } from "./t
 export class KaiBrain {
   private readonly memory: MemoryStore;
   private readonly jobs: JobManager;
-
   constructor(private readonly model?: ModelAdapter, memory?: MemoryStore, jobs?: JobManager) {
-    this.memory = memory ?? new InMemoryStore();
-    this.jobs = jobs ?? new JobManager();
+    this.memory = memory ?? new InMemoryStore(); this.jobs = jobs ?? new JobManager();
   }
 
   async think(request: BrainRequest): Promise<BrainResponse> {
-    const plan = planRequest(request);
-    const agent = AGENTS[plan.character];
-
+    const plan = planRequest(request); const agent = AGENTS[plan.character];
+    const previousTask = await this.memory.get(request.userId, "last_task_kind");
+    const history = this.memory.list ? await this.memory.list(request.userId, "conversation", 8) : [];
     await this.memory.set(request.userId, "last_character", plan.character);
     await this.memory.set(request.userId, "last_task_kind", plan.kind);
+    if (this.memory.append) await this.memory.append(request.userId, "conversation", JSON.stringify({ role:"user", message:request.message, character:plan.character, kind:plan.kind }));
 
-    const job = this.jobs.create(request.userId, plan);
-
-    if (!this.model) {
-      return {
-        plan,
-        reply: this.fallbackReply(agent.name, plan.kind, job.id)
-      };
+    const job = plan.requiresBackgroundJob ? this.jobs.create(request.userId, plan) : undefined;
+    if (this.model) {
+      const reply = await this.model.generate({
+        system: [
+          "You are the Kai Brain Core.", `Character: ${agent.name}`, `Mission: ${agent.mission}`,
+          `Task type: ${plan.kind}`, `Confidence: ${plan.confidence.toFixed(2)}`,
+          `Available tools: ${plan.tools.join(", ") || "none"}`, `Previous task: ${previousTask ?? "none"}`,
+          `Recent context: ${history.join(" | ") || "none"}`,
+          "Never claim a tool ran or work completed unless the execution system confirms it.",
+          "For background work, say it is queued/working until execution reports completion."
+        ].join("\n"), message: request.message, context: history.join("\n")
+      });
+      if (this.memory.append) await this.memory.append(request.userId, "conversation", JSON.stringify({ role:"assistant", message:reply, character:plan.character }));
+      return { plan, reply, jobId: job?.id };
     }
 
-    const previousTask = await this.memory.get(request.userId, "last_task_kind");
-    const reply = await this.model.generate({
-      system: [
-        "You are the Kai Brain Core.",
-        \`You are routing this request to \${agent.name}.\`,
-        \`Agent mission: \${agent.mission}\`,
-        \`Task type: \${plan.kind}\`,
-        \`Available planned tools: \${plan.tools.join(", ") || "none"}\`,
-        \`Previous task type: \${previousTask ?? "none"}\`,
-        "Never claim a tool ran or work completed unless the execution system confirms it.",
-        "If a task requires background work, explain that it is queued/working rather than pretending it is finished."
-      ].join("\\n"),
-      message: request.message
-    });
-
-    return { plan, reply };
+    const reply = plan.kind === "chat"
+      ? `${agent.name} understood: "${plan.goal}". The Brain Core can plan this request, but its language-model adapter is not connected yet.`
+      : `${agent.name} understood this as a ${plan.kind} task. Background job ${job?.id ?? "not required"} is ${job ? "queued" : "not created"}; no creation or completion is being claimed.`;
+    if (this.memory.append) await this.memory.append(request.userId, "conversation", JSON.stringify({ role:"assistant", message:reply, character:plan.character }));
+    return { plan, reply, jobId: job?.id };
   }
 
-  getJob(id: string) {
-    return this.jobs.get(id);
-  }
-
-  private fallbackReply(agentName: string, kind: string, jobId: string): string {
-    return \`Routed to \${agentName} for a \${kind} task. Job \${jobId} has been created. No AI model or creation tool is connected yet, so no work is being falsely reported as completed.\`;
-  }
+  getJob(id: string) { return this.jobs.get(id); }
 }
