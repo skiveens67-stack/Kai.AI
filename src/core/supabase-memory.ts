@@ -7,7 +7,7 @@ type MemoryRow = { value: string };
 export class SupabaseMemoryStore implements MemoryStore {
   private readonly baseUrl: string;
   constructor(private readonly env: SupabaseMemoryEnv, private readonly fetcher: typeof fetch = fetch) {
-    this.baseUrl = env.url.replace(/\\/+$/, "");
+    this.baseUrl = env.url.replace(/\/+$/, "");
     if (!this.baseUrl || !env.serviceRoleKey) throw new Error("Supabase memory credentials are missing.");
   }
 
