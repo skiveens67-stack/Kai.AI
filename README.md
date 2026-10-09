@@ -56,6 +56,10 @@ These are **database foundations**, not proof that each product feature has a fi
 
 Persistent contextual memory is not automatic retraining of the underlying model.
 
+## Security follow-up
+
+The latest Supabase security advisor reported that leaked-password protection is disabled. Enable this in Supabase Auth password-security settings before a public launch. Review rate limits, MFA/passkeys, session/device management, and account recovery behavior in the Auth dashboard. A successful database migration or static syntax check does not replace a full security review.
+
 ## Transactional email status
 
 Resend currently contains draft templates for account verification, password reset, welcome messages, security alerts, payment receipts, creation-complete notifications, and creator payout updates. They are not published or connected to Supabase Auth. No sending domain is configured, so production email delivery is not ready. After a domain is owned and verified, configure Resend DNS, connect the provider to Supabase Auth SMTP, set the correct confirmation/reset redirect URLs, publish and test templates, and verify actual delivery before enabling real signups.
