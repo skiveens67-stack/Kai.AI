@@ -58,3 +58,26 @@ test("character endpoint exposes only public agent metadata", async () => {
   const body = await response.json() as { characters: Array<{ id: string; name: string }> };
   assert.deepEqual(body.characters.map(item => item.id).sort(), ["cookie", "jake", "kai", "lily"]);
 });
+
+test("chat endpoint requires authentication after configuration is present", async () => {
+  const env = {
+    SUPABASE_URL: "https://example.supabase.co",
+    SUPABASE_ANON_KEY: "public-test-key",
+    SUPABASE_SERVICE_ROLE_KEY: "test-only-not-a-real-secret",
+    KAI_ALLOWED_ORIGIN: "https://kai-ai.higgsfield.app",
+    AI: {}
+  };
+  const response = await worker.fetch(new Request("https://kai-brain-core.example/", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ message: "hello" })
+  }), env as never);
+  assert.equal(response.status, 401);
+});
+
+test("rejects browser requests from origins outside the allowlist", async () => {
+  const response = await worker.fetch(new Request("https://kai-brain-core.example/health", {
+    headers: { origin: "https://not-kai.example" }
+  }), { KAI_ALLOWED_ORIGIN: "https://kai-ai.higgsfield.app" } as never);
+  assert.equal(response.status, 403);
+});
