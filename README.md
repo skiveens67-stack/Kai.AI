@@ -34,13 +34,14 @@ The shared Brain prompt includes each agent's persona and safety boundaries. It 
 The database contains Row-Level Security (RLS)-enabled tables for:
 
 - user consents, profiles, creation jobs, persistent Brain memory and events;
-- subscription records, promotion orders, payment event idempotency, marketplace listings and purchases;
+- subscription tiers and records, promotion orders, payment event idempotency, marketplace listings and purchases;
 - AI credit accounts and a credit ledger;
 - family character definitions, chat conversations and messages;
-- community spaces and memberships, social post drafts, moderation reports, appeals, notifications, support tickets, and security events;
-- auto-post jobs, transfer requests, game play-test runs, creator attribution removal orders, view metrics, and creator earnings.
+- community spaces, memberships and group chat; social posts, follows, comments and reactions;
+- moderation reports, appeals, notifications, support tickets, and security events;
+- auto-post jobs, job listings and applications, transfer requests, game play-test runs, creator attribution removal orders, view metrics, and creator earnings.
 
-These are **database foundations**, not proof that each product feature has a finished user interface or live integration. Sensitive payment/earnings/view-event tables are not directly writable by signed-in clients; trusted server-side handlers must update payment status and financial records. Client-created social posts and marketplace listings begin as drafts and require a trusted moderation/publishing path.
+These are **database foundations**, not proof that each product feature has a finished user interface or live integration. Sensitive payment/earnings/view-event tables are not directly writable by signed-in clients; trusted server-side handlers must update payment status and financial records. Client-created social posts and marketplace listings begin as drafts and require a trusted moderation/publishing path. The proposed $500 reward per 200,000 views is stored as a disabled rule until view fraud prevention, eligibility, funding, tax, and payout controls exist.
 
 ## Persistent memory
 
@@ -56,7 +57,7 @@ Resend currently contains draft templates for account verification, password res
 
 ## Payment status
 
-Database records are prepared for subscriptions, $25+ promotion orders, marketplace purchases, payment webhook idempotency, transfer requests, and creator earnings. These records do not move money by themselves. A production payment flow still needs Stripe Checkout/Billing/Connect setup, verified webhooks, reconciliation, refunds/disputes, seller onboarding, and any required legal/compliance review. Do not describe internal balances or transfer requests as a live bank or money-transfer service.
+Database records are prepared for Free, Galaxy, Studio Pro, and Ultimate plans; $25+ promotion orders; marketplace purchases; payment webhook idempotency; transfer requests; and creator earnings. Paid plan prices are intentionally unset and those plans are disabled. These records do not move money by themselves. A production payment flow still needs Stripe Checkout/Billing/Connect setup, verified webhooks, reconciliation, refunds/disputes, seller onboarding, and any required legal/compliance review. Do not describe internal balances or transfer requests as a live bank or money-transfer service.
 
 ## Status
 
