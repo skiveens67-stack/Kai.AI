@@ -1,4 +1,5 @@
 import { KaiBrain } from "./core/brain.js";
+import { AGENTS } from "./core/agents.js";
 import { CloudflareWorkersAIAdapter, type WorkersAIChatBinding } from "./core/cloudflare-workers-ai.js";
 import { SupabaseMemoryStore } from "./core/supabase-memory.js";
 
@@ -19,7 +20,7 @@ function json(body: unknown, status = 200, origin = ""): Response {
   if (origin) {
     headers["access-control-allow-origin"] = origin;
     headers["access-control-allow-headers"] = "authorization, content-type";
-    headers["access-control-allow-methods"] = "POST, OPTIONS";
+    headers["access-control-allow-methods"] = "GET, POST, OPTIONS";
   }
   return new Response(JSON.stringify(body), { status, headers });
 }
@@ -29,12 +30,24 @@ export default {
     const origin = request.headers.get("origin") ?? "";
     const allowedOrigin = env.KAI_ALLOWED_ORIGIN ?? "";
     if (origin && origin !== allowedOrigin) return json({ error: "Origin not allowed." }, 403);
+
+    const url = new URL(request.url);
+    if (request.method === "GET" && url.pathname === "/health") {
+      return json({ ok: true, service: "kai-brain-core", timestamp: new Date().toISOString() }, 200, origin);
+    }
+    if (request.method === "GET" && url.pathname === "/characters") {
+      return json({
+        characters: Object.entries(AGENTS).map(([id, agent]) => ({
+          id, name: agent.name, mission: agent.mission, specialties: agent.specialties
+        }))
+      }, 200, origin);
+    }
     if (request.method === "OPTIONS") {
       if (!allowedOrigin) return json({ error: "CORS origin is not configured." }, 503);
       return new Response(null, { status: 204, headers: {
         "access-control-allow-origin": allowedOrigin,
         "access-control-allow-headers": "authorization, content-type",
-        "access-control-allow-methods": "POST, OPTIONS", "access-control-max-age": "86400", vary: "Origin"
+        "access-control-allow-methods": "GET, POST, OPTIONS", "access-control-max-age": "86400", vary: "Origin"
       } });
     }
     if (request.method !== "POST") return json({ error: "Use POST." }, 405, origin);
