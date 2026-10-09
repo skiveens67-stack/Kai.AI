@@ -2,6 +2,14 @@
 
 Kai's server-side Brain Core routes requests to Kai.AI, Lily.AI, Jake.AI, and Cookie.AI, calls Cloudflare Workers AI, and can persist explicitly saved preferences and recent conversation history in Supabase.
 
+## API endpoints
+
+- `GET /health`: minimal service health response.
+- `GET /characters`: public metadata for the four Kai family agents.
+- `POST /`: authenticated chat request; requires a valid Supabase Auth access token and JSON body `{"message":"Hello Kai"}`.
+
+The browser origin is restricted by `KAI_ALLOWED_ORIGIN`. A successful health response only confirms the Worker responds; it does not prove AI, email, or payments are fully operational.
+
 ## Deployment requirements
 
 1. In Cloudflare, open **Workers & Pages** and select the `kai-brain-core` Worker.
@@ -10,7 +18,7 @@ Kai's server-side Brain Core routes requests to Kai.AI, Lily.AI, Jake.AI, and Co
 4. Configure GitHub Actions repository secrets `CLOUDFLARE_API_TOKEN` and `SUPABASE_SERVICE_ROLE_KEY` before using the deploy workflow.
 5. Deploy from the repository root with `npm run typecheck`, `npm test`, and `npx wrangler deploy`.
 6. Verify the Worker has its `AI` binding, the `SUPABASE_SERVICE_ROLE_KEY` secret, and the variables in `wrangler.toml`.
-7. Call the Worker with `POST`, a valid Supabase Auth access token in `Authorization: Bearer <access-token>`, and JSON body `{"message":"Hello Kai"}`. The Worker verifies the token with Supabase and derives the user ID from the verified account; callers cannot choose another user's memory ID.
+7. For chat, send a valid Supabase Auth access token in `Authorization: Bearer <access-token>`. The Worker verifies the token with Supabase and derives the user ID from the verified account; callers cannot choose another user's memory ID.
 
 ## Character agents
 
@@ -44,7 +52,7 @@ Persistent contextual memory is not automatic retraining of the underlying model
 
 ## Transactional email status
 
-Resend currently contains draft templates for account verification and password reset. They are not published or connected to Supabase Auth. No sending domain is configured, so production email delivery is not ready. After a domain is owned and verified, configure Resend DNS, connect the provider to Supabase Auth SMTP, set the correct confirmation/reset redirect URLs, publish and test templates, and verify actual delivery before enabling real signups.
+Resend currently contains draft templates for account verification, password reset, welcome messages, security alerts, payment receipts, creation-complete notifications, and creator payout updates. They are not published or connected to Supabase Auth. No sending domain is configured, so production email delivery is not ready. After a domain is owned and verified, configure Resend DNS, connect the provider to Supabase Auth SMTP, set the correct confirmation/reset redirect URLs, publish and test templates, and verify actual delivery before enabling real signups.
 
 ## Payment status
 
