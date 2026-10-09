@@ -4,6 +4,7 @@ Kai's server-side Brain Core routes requests to Kai.AI, Lily.AI, Jake.AI, and Co
 
 ## API endpoints
 
+- Supabase Edge Function `kai-brain`: validates the user's Supabase session, proxies the chat request to the Cloudflare Worker, and attempts to save user/assistant conversation events under that user's RLS policy. The response includes `conversationSaved` so persistence failure is not hidden.
 - `GET /health`: minimal service health response.
 - `GET /characters`: public metadata for the four Kai family agents.
 - `POST /`: authenticated chat request; requires a valid Supabase Auth access token and JSON body `{"message":"Hello Kai"}`.
@@ -61,4 +62,4 @@ Database records are prepared for Free, Galaxy, Studio Pro, and Ultimate plans; 
 
 ## Status
 
-Source and schema foundations are in progress. A successful current production deployment, real authenticated model-response test, working transactional email delivery, and end-to-end payment tests are still required before calling Kai.AI complete.
+Source and schema foundations are in progress. The Supabase `kai-brain` and `stripe-webhook` functions are deployed, but the Cloudflare GitHub Actions deployment did not run because repository secrets `CLOUDFLARE_API_TOKEN` and `SUPABASE_SERVICE_ROLE_KEY` are missing. The Stripe webhook also needs `STRIPE_WEBHOOK_SECRET` and a Stripe dashboard endpoint. A successful current production deployment, real authenticated model-response test, working transactional email delivery, and end-to-end payment tests are still required before calling Kai.AI complete.
