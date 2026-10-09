@@ -2,6 +2,10 @@
 
 Kai's server-side Brain Core routes requests to Kai.AI, Lily.AI, Jake.AI, and Cookie.AI, calls Cloudflare Workers AI, and can persist explicitly saved preferences and recent conversation history in Supabase.
 
+## Creator Studio frontend
+
+A static, responsive frontend lives in `studio/index.html`, `studio/app.js`, and `studio/config.js`. It uses Supabase Auth with persistent sessions and exposes account, chat, image/video/game/site/app planning, marketplace, promotion, seller onboarding, billing, social drafts, hubs, jobs, support, settings, and integrations screens. The browser config contains only the public Supabase publishable key. Provider-dependent generation is clearly labeled as unavailable until connected. CI checks browser-module syntax and verifies no service-role/Stripe/Resend secret names are present in the public config. The Studio has not been deployed to a public hosting URL; Vercel GitHub linking was blocked because a GitHub login connection is missing.
+
 ## API endpoints
 
 - Supabase Edge Function `kai-brain`: validates the user's Supabase session, proxies the chat request to the Cloudflare Worker, and attempts to save user/assistant conversation events under that user's RLS policy. The response includes `conversationSaved` so persistence failure is not hidden.
