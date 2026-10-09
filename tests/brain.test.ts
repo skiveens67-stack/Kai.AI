@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { KaiBrain } from "../src/index.js";
+import { AGENTS } from "../src/core/agents.js";
 
 test("routes a game request to Jake and creates background work", async () => {
   const brain = new KaiBrain();
@@ -25,4 +26,19 @@ test("the shared brain honors explicit character requests", async () => {
     const result = await brain.think({ userId: "character-test", message: item.message });
     assert.equal(result.plan.character, item.character);
   }
+});
+
+test("all four family agents have distinct missions, personas, and safety guidance", () => {
+  const agents = Object.values(AGENTS);
+  assert.equal(agents.length, 4);
+  assert.equal(new Set(agents.map(agent => agent.name)).size, 4);
+  assert.equal(new Set(agents.map(agent => agent.mission)).size, 4);
+  for (const agent of agents) {
+    assert.ok(agent.persona.trim().length > 40);
+    assert.ok(agent.specialties.length > 0);
+  }
+  assert.match(AGENTS.kai.persona, /Never say work is complete/i);
+  assert.match(AGENTS.lily.persona, /licensed therapist or clinician/i);
+  assert.match(AGENTS.cookie.persona, /breaking into accounts/i);
+  assert.match(AGENTS.jake.persona, /play-tested/i);
 });
