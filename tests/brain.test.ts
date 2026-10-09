@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { KaiBrain } from "../src/index.js";
 import { AGENTS } from "../src/core/agents.js";
+import worker from "../src/worker.js";
 
 test("routes a game request to Jake and creates background work", async () => {
   const brain = new KaiBrain();
@@ -41,4 +42,19 @@ test("all four family agents have distinct missions, personas, and safety guidan
   assert.match(AGENTS.lily.persona, /licensed therapist or clinician/i);
   assert.match(AGENTS.cookie.persona, /breaking into accounts/i);
   assert.match(AGENTS.jake.persona, /play-tested/i);
+});
+
+test("health endpoint reports service identity without requiring user authentication", async () => {
+  const response = await worker.fetch(new Request("https://kai-brain-core.example/health"), {} as never);
+  assert.equal(response.status, 200);
+  const body = await response.json() as { ok: boolean; service: string };
+  assert.equal(body.ok, true);
+  assert.equal(body.service, "kai-brain-core");
+});
+
+test("character endpoint exposes only public agent metadata", async () => {
+  const response = await worker.fetch(new Request("https://kai-brain-core.example/characters"), {} as never);
+  assert.equal(response.status, 200);
+  const body = await response.json() as { characters: Array<{ id: string; name: string }> };
+  assert.deepEqual(body.characters.map(item => item.id).sort(), ["cookie", "jake", "kai", "lily"]);
 });
