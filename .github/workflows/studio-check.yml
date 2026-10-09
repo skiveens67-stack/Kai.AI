@@ -1,0 +1,29 @@
+name: Kai Studio checks
+on:
+  push:
+    paths:
+      - "studio/**"
+      - ".github/workflows/studio-check.yml"
+  pull_request:
+    paths:
+      - "studio/**"
+      - ".github/workflows/studio-check.yml"
+jobs:
+  syntax-and-static-config:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check browser module syntax
+        run: node --check studio/app.js
+      - name: Check public config syntax
+        run: node --check studio/config.js
+      - name: Check required frontend files
+        run: |
+          test -s studio/index.html
+          grep -q 'src="./config.js"' studio/index.html
+          grep -q 'src="./app.js"' studio/index.html
+          grep -q 'supabasePublishableKey' studio/config.js
+          ! grep -q 'SERVICE_ROLE_KEY\|STRIPE_SECRET_KEY\|RESEND_API_KEY' studio/config.js
