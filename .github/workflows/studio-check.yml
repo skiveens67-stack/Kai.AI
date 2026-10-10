@@ -20,9 +20,12 @@ jobs:
         run: node --check studio/app.js
       - name: Check public config syntax
         run: node --check studio/config.js
-      - name: Check required frontend files
+      - name: Check required frontend files and public-secret boundary
         run: |
           test -s studio/index.html
+          test -s studio/app.js
+          test -s studio/config.js
+          test -s studio/vercel.json
           grep -q 'src="./config.js"' studio/index.html
           grep -q 'src="./app.js"' studio/index.html
           grep -q 'supabasePublishableKey' studio/config.js
@@ -33,3 +36,6 @@ jobs:
           grep -q 'function historyPush(path)' studio/app.js
           grep -q 'window.addEventListener("popstate"' studio/app.js
           grep -q 'resetPasswordForEmail' studio/app.js
+      - name: Validate direct-load hosting rewrites
+        run: |
+          node -e 'const fs=require("node:fs");const v=JSON.parse(fs.readFileSync("studio/vercel.json","utf8"));const r=v.rewrites||[];for(const p of ["/signup","/signin"])if(!r.some(x=>x.source===p&&x.destination==="/index.html"))throw Error("Missing direct-load rewrite: "+p);if(!r.some(x=>x.source==="/(.*)"&&x.destination==="/index.html"))throw Error("Missing app fallback rewrite");'
