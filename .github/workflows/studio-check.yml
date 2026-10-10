@@ -27,3 +27,9 @@ jobs:
           grep -q 'src="./app.js"' studio/index.html
           grep -q 'supabasePublishableKey' studio/config.js
           ! grep -q 'SERVICE_ROLE_KEY\|STRIPE_SECRET_KEY\|RESEND_API_KEY' studio/config.js
+      - name: Check auth route regression guards
+        run: |
+          grep -q 'location.pathname==="/signup"?"signup":"signin"' studio/app.js
+          grep -q 'function historyPush(path)' studio/app.js
+          grep -q 'window.addEventListener("popstate"' studio/app.js
+          grep -q 'resetPasswordForEmail' studio/app.js
