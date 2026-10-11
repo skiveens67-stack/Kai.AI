@@ -28,8 +28,9 @@ function json(body: unknown, status = 200, origin = ""): Response {
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const origin = request.headers.get("origin") ?? "";
-    const allowedOrigin = env.KAI_ALLOWED_ORIGIN ?? "";
-    if (origin && origin !== allowedOrigin) return json({ error: "Origin not allowed." }, 403);
+    const allowedOrigins = (env.KAI_ALLOWED_ORIGIN ?? "").split(",").map((value) => value.trim()).filter(Boolean);
+    const allowedOrigin = origin && allowedOrigins.includes(origin) ? origin : "";
+    if (origin && !allowedOrigins.includes(origin)) return json({ error: "Origin not allowed." }, 403);
 
     const url = new URL(request.url);
     if (request.method === "GET" && url.pathname === "/health") {
@@ -43,9 +44,9 @@ export default {
       }, 200, origin);
     }
     if (request.method === "OPTIONS") {
-      if (!allowedOrigin) return json({ error: "CORS origin is not configured." }, 503);
+      if (allowedOrigins.length === 0) return json({ error: "CORS origin is not configured." }, 503);
       return new Response(null, { status: 204, headers: {
-        "access-control-allow-origin": allowedOrigin,
+        "access-control-allow-origin": origin,
         "access-control-allow-headers": "authorization, content-type",
         "access-control-allow-methods": "GET, POST, OPTIONS", "access-control-max-age": "86400", vary: "Origin"
       } });
