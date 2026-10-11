@@ -19,7 +19,7 @@ function json(body: unknown, status = 200, origin = ""): Response {
   };
   if (origin) {
     headers["access-control-allow-origin"] = origin;
-    headers["access-control-allow-headers"] = "authorization, content-type";
+    headers["access-control-allow-headers"] = "authorization, apikey, content-type, x-client-info, x-supabase-api-version";
     headers["access-control-allow-methods"] = "GET, POST, OPTIONS";
   }
   return new Response(JSON.stringify(body), { status, headers });
@@ -47,7 +47,7 @@ export default {
       if (allowedOrigins.length === 0) return json({ error: "CORS origin is not configured." }, 503);
       return new Response(null, { status: 204, headers: {
         "access-control-allow-origin": origin,
-        "access-control-allow-headers": "authorization, content-type",
+        "access-control-allow-headers": "authorization, apikey, content-type, x-client-info, x-supabase-api-version",
         "access-control-allow-methods": "GET, POST, OPTIONS", "access-control-max-age": "86400", vary: "Origin"
       } });
     }
