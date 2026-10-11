@@ -6,5 +6,6 @@ window.KAI_CONFIG = Object.freeze({
   checkoutFunction: "create-checkout",
   sellerOnboardingFunction: "seller-onboarding",
   cancelAutoPostFunction: "cancel-auto-post",
-  refundFunction: "request-refund"
+  refundFunction: "request-refund",
+  turnstileSiteKey: "" // Add the public Cloudflare Turnstile site key here; never put the secret key in this file.
 });
