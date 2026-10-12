@@ -50,6 +50,36 @@
 #page .item{overflow-wrap:anywhere}
 #page input,#page textarea,#page select{max-width:100%;box-sizing:border-box}
 
+
+/* Visible, accessible Kai Human Check */
+#kaiHumanCheck{display:block!important;visibility:visible!important;opacity:1!important;background:linear-gradient(145deg,#111c39,#0d1328);border:1px solid #40558d;border-radius:14px;padding:14px;margin:14px 0;box-shadow:0 0 22px #596dff18}
+#kaiHumanCheck label{display:block;font-weight:700;letter-spacing:.08em;margin-bottom:9px;color:#b9c9ff}
+#kaiHumanQuestion{display:block!important;color:#f3f5ff!important;font-size:14px!important;margin-bottom:10px!important}
+#kaiHumanTiles{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:8px!important}
+#kaiHumanTiles button{min-height:54px!important;background:#0b1228!important;border:1px solid #33436f!important;border-radius:10px!important;font-size:27px!important}
+#kaiHumanTiles button:focus-visible{outline:2px solid #5ee7f7;outline-offset:2px}
+.kai-game-overlay{position:fixed;inset:0;z-index:100001;background:#050816eF;backdrop-filter:blur(12px);display:grid;place-items:center;padding:18px}
+.kai-game-modal{width:min(760px,100%);max-height:92vh;overflow:auto;padding:22px;border:1px solid #354777;border-radius:22px;background:linear-gradient(145deg,#131d39,#0c1123);box-shadow:0 24px 100px #000a}
+.kai-game-stage{min-height:230px;margin-top:14px;padding:20px;border:1px solid #2a3962;border-radius:16px;background:radial-gradient(ellipse at top,#1d2b55,#0a1023);display:flex;flex-wrap:wrap;align-content:center;align-items:center;justify-content:center;gap:10px}
+.kai-game-stage h3{width:100%;text-align:center}
+.kai-game-stage button{min-width:76px;min-height:44px}
+.kai-big-game-btn{width:170px;height:100px;font-size:23px!important;border-radius:20px!important;background:linear-gradient(135deg,#387cff,#8554f2)!important}
+.kai-memory-grid{display:grid;grid-template-columns:repeat(4,minmax(48px,72px));gap:8px;width:100%;justify-content:center}
+.kai-memory-card{height:62px;font-size:25px!important;background:#1a2850!important}
+.kai-tic-grid{display:grid;grid-template-columns:repeat(3,78px);gap:7px}
+.kai-tic-cell{height:72px;font-size:24px!important}
+.kai-maze{display:grid;grid-template-columns:repeat(5,36px);gap:3px;width:100%;justify-content:center}
+.kai-maze-cell{min-width:36px!important;width:36px;height:36px;padding:2px!important}
+.kai-pattern-grid{display:grid;grid-template-columns:repeat(2,72px);gap:8px}
+.kai-pattern-cell{height:64px;font-size:26px!important}
+.field-input{min-height:42px;background:#0a1022;color:#fff;border:1px solid #3a4a77;border-radius:10px;padding:10px 12px;max-width:100%}
+.game-art{height:96px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,#1d3874,#432b80);border:1px solid #3b4d81}
+.game-art span{font-size:42px;filter:drop-shadow(0 6px 10px #0006)}
+.game-art-memory-flip,.game-art-pattern-pulse{background:linear-gradient(135deg,#204d63,#483080)}
+.game-art-dodge-drop,.game-art-space-defender{background:linear-gradient(135deg,#6b2a59,#242b69)}
+.game-tile{min-width:0}
+@media(max-width:600px){.kai-game-modal{padding:14px}.kai-game-stage{padding:12px}.kai-tic-grid{grid-template-columns:repeat(3,64px)}.kai-tic-cell{height:62px}}
+
 </style></head><body>
 <div id="authShell" class="auth">
 <section class="hero"><div class="brandrow" style="padding:0"><div class="mark">K</div><div class="brand">Kai<span class="dot">.</span>AI</div><span class="pill">CREATOR STUDIO</span></div><div style="margin-top:42px;color:var(--cyan);font-size:11px;font-weight:700;letter-spacing:2px">ONE AI FAMILY. LIMITLESS IDEAS.</div><h1><span class="gradient">Imagine it.</span><br>Build it with Kai.</h1><p class="tagline">Chat, create, learn, and build games, apps, and websites with Kai.AI.</p><div class="grid two" style="margin-top:25px;max-width:600px"><div class="card"><strong>✦ Kai Chat</strong><p class="muted small">Plan ideas and work through projects.</p></div><div class="card"><strong>◈ Creator Studio</strong><p class="muted small">Images, videos, games, apps and websites.</p></div></div><p class="footer-note">Some features are still being prepared and are marked clearly. AI-assisted experiences may use ChatGPT; attribution should reflect the tools actually used.</p></section>
