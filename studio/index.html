@@ -98,4 +98,18 @@
 <div id="appShell" class="shell hidden"><aside id="sidebar" class="sidebar"><div class="brandrow"><div class="mark">K</div><div class="brand">Kai<span class="dot">.</span>AI</div></div><nav id="nav"></nav><div class="sidebarfoot"><div class="row"><div class="avatar">K</div><div><strong id="sideName">Kai Creator</strong><div class="muted small" id="sideEmail">Free plan</div></div></div><div class="rule"></div><button class="btn ghost smallbtn" id="signOutBtn" style="width:100%">↗ Sign out</button></div></aside>
 <main class="main"><header class="topbar"><div class="row"><button class="btn mobilemenu" id="mobileMenuBtn">☰</button><div><div style="color:var(--cyan);font-size:10px;letter-spacing:1.6px;font-weight:700">KAI.AI / CREATOR STUDIO</div><div class="muted small">Your creative command center</div></div></div><div class="row"><span id="topPlan" class="pill">Free plan</span><div id="topAvatar" class="avatar">K</div></div></header><div id="page"></div></main></div><div id="toast" class="toast" role="status" aria-live="polite"></div><div id="kaiTransition" aria-live="polite" aria-label="Kai.AI transition"><div class="kai-transition-card"><div class="kai-orbit"><span>K</span></div><div class="kai-transition-title" id="kaiTransitionTitle">Welcome to Kai.AI</div><div class="kai-transition-sub" id="kaiTransitionSub">Preparing your creative studio</div><div class="kai-transition-dots" aria-hidden="true"><i></i><i></i><i></i></div></div></div>
 <script src="./config.js"></script>
-<script type="module" src="./app.js?v=20261011-loading-timeout-fix"></script></body></html>
+<script>
+(function(){
+  function showLoadRecovery(){
+    var page=document.getElementById("page");
+    if(!page||!document.getElementById("appShell")||document.getElementById("appShell").classList.contains("hidden"))return;
+    var t=(page.innerText||"");
+    if(!/Loading real account data|Loading your Kai\.AI data|Loading real account/i.test(t))return;
+    page.innerHTML='<div class="panel"><h2>Kai.AI is taking too long to load</h2><p class="muted">The page script is running, but a data request or an old cached version is not finishing. You can retry or open a section that does not need account data.</p><div class="row wrap" style="gap:8px;margin:14px 0"><button class="btn primary" id="kaiRecoveryReload">Reload Kai.AI</button><button class="btn" data-recovery-page="home">Overview</button><button class="btn" data-recovery-page="social">Kai Social</button><button class="btn" data-recovery-page="school-hub">School Hub</button><button class="btn" data-recovery-page="family-hub">Family Hub</button></div><p class="muted small">If this message appears again after reload, the account data service needs to be checked. Your account has not been deleted.</p></div>';
+    document.getElementById("kaiRecoveryReload").onclick=function(){location.reload()};
+    page.querySelectorAll("[data-recovery-page]").forEach(function(b){b.onclick=function(){var nav=document.querySelector('#nav [data-page="'+b.dataset.recoveryPage+'"]');if(nav)nav.click();else{page.innerHTML='<div class="notice bad">The app navigation has not initialized. Reload Kai.AI and try again.</div>'}}});
+  }
+  window.setTimeout(showLoadRecovery,20000);
+})();
+</script>
+<script type="module" src="./app.js?v=20261011-loading-recovery-v2"></script></body></html>
