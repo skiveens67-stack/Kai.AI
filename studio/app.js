@@ -67,7 +67,7 @@ function initKaiHumanCheck(){
  if(!needed){kaiHumanChallenge=null;return}
  const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
  host.innerHTML="";if(answer){answer.value="";answer.classList.add("hidden")}if(math)math.classList.add("hidden");
- if(Math.random()<0.94){
+ if(true){
   const task=KAI_HUMAN_TASKS[Math.floor(Math.random()*KAI_HUMAN_TASKS.length)],target=task[0],targets=task[1],decoys=task[2],tiles=[];
   const count=2+Math.floor(Math.random()*4);
   for(let i=0;i<count;i++)tiles.push({emoji:targets[Math.floor(Math.random()*targets.length)],correct:true});
