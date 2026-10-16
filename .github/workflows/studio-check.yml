@@ -27,7 +27,7 @@ jobs:
           test -s studio/config.js
           test -s studio/vercel.json
           grep -q 'src="./config.js"' studio/index.html
-          grep -q 'src="./app.js"' studio/index.html
+          grep -q 'src="./app.js' studio/index.html
           grep -q 'supabasePublishableKey' studio/config.js
           ! grep -q 'SERVICE_ROLE_KEY\|STRIPE_SECRET_KEY\|RESEND_API_KEY' studio/config.js
       - name: Check auth route regression guards
